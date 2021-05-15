@@ -1,17 +1,33 @@
 import Phaser from 'phaser';
 import red from '../assets/red.png';
+import fieldMap from '../assets/map.json';
+import atlas from '../assets/atlas.png';
+import AnimatedTiles from '../js/AnimatedTiles.min.js';
+import senyum from '../assets/senyum.jpg';
 
-export default class Rect extends Phaser.Scene {
+export default class Game extends Phaser.Scene {
 	constructor(){
-		super({key: "rectScene"});
+		super({key: "gameScene"});
 	}
 	
 	preload(){
 		this.load.image('red', red);
+		this.load.scenePlugin('animatedTiles', AnimatedTiles, 'animatedTiles', 'animatedTiles');
+		this.load.tilemapTiledJSON('map', fieldMap);
+		this.load.image('tiles', atlas);
+		this.load.image('smile', senyum);
 	}
 	
 	create(){
-		this.startRect = new Phaser.Geom.Rectangle(0, 0, 360, 600);
+		
+		//generate Tilemap
+		this.map = this.make.tilemap({ key: 'map' });
+		this.tileset = this.map.addTilesetImage('sprites', 'tiles');
+		this.layer1 = this.map.createLayer('base', this.tileset, 0, 0);
+		this.layer2 = this.map.createLayer('vegetation', this.tileset, 0, 0);
+		this.sys.animatedTiles.init(this.map);
+		
+		this.startRect = new Phaser.Geom.Rectangle(0, 0, 150, 300);
 		
 		this.cats = this.add.group();
 		

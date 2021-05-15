@@ -1,7 +1,8 @@
 import Phaser from 'phaser';
 //import TestScene from './TestScene';
 //import TestTilemap from './TestTilemap';
-import Rect from './Rect';
+//import Rect from './Rect';
+import Game from './Game';
 import BBCodeTextPlugin from 'phaser3-rex-plugins/plugins/bbcodetext-plugin.js';
 import DragPlugin from 'phaser3-rex-plugins/plugins/drag-plugin.js';
 import VirtualJoystickPlugin from 'phaser3-rex-plugins/plugins/virtualjoystick-plugin.js';
@@ -11,15 +12,12 @@ import OutlinePostFx from 'phaser3-rex-plugins/plugins/outlinepipeline.js';
 import FlashPlugin from 'phaser3-rex-plugins/plugins/flash-plugin.js';
 
 export default {
-	width: 360,
-	height: 640,
+	width: 180,
+	height: 320,
 	title: "Phaser dengan ParcelJS guys",
+	pixelArt: true,
 	url: "yesbesoklibur.com",
 	backgroundColor: 0xffffff,
-	render: {
-		//pixelArt: true,
-		roundPixels: true
-	},
 	scale: {
 		mode: Phaser.Scale.FIT,
 		autoCenter: Phaser.Scale.CENTER_BOTH
@@ -28,7 +26,7 @@ export default {
 		default: 'arcade',
 		arcade: {
 			//gravity: { y: 100 },
-			debug: true
+			debug: false
 			}
 	},
 	/*pipeline: [GrayScalePostFx, OutlinePostFx],
@@ -63,5 +61,5 @@ export default {
 		}
 			]
 	}, */
-	scene: [Rect]
+	scene: [Game]
 };
