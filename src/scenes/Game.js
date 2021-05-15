@@ -1,9 +1,9 @@
 import Phaser from 'phaser';
-import red from '../assets/cat.png';
+import cat from '../assets/cat.png';
 import fieldMap from '../assets/map.json';
 import atlas from '../assets/atlas.png';
 import AnimatedTiles from '../js/AnimatedTiles.min.js';
-import senyum from '../assets/senyum.jpg';
+//import senyum from '../assets/senyum.jpg';
 
 export default class Game extends Phaser.Scene {
 	constructor(){
@@ -11,11 +11,12 @@ export default class Game extends Phaser.Scene {
 	}
 	
 	preload(){
-		this.load.image('red', red);
+		//this.load.image('red', red);
+		this.load.spritesheet('cat', cat, { frameWidth: 8, frameHeight: 8 });
 		this.load.scenePlugin('animatedTiles', AnimatedTiles, 'animatedTiles', 'animatedTiles');
 		this.load.tilemapTiledJSON('map', fieldMap);
 		this.load.image('tiles', atlas);
-		this.load.image('smile', senyum);
+		//this.load.image('smile', senyum);
 	}
 	
 	create(){
@@ -33,13 +34,28 @@ export default class Game extends Phaser.Scene {
 		
 		this.targets = [0,0,0,0,0,0,0,0,0];
 		this.distances = [0,0,0,0,0,0,0,0,0];
-		this.colors = [0xffffff, 0xb4f8c8, 0xffaebc, 0xa49393, 0xff75d8]
+		this.colors = [0xffffff, 0xb4f8c8, 0xffaebc, 0xa49393, 0xff75d8];
+		
+		this.animIdle = this.anims.create({
+            key: 'idle',
+            frames: this.anims.generateFrameNumbers('cat', { frames: [ 2, 3 ] }),
+            frameRate: 4,
+            repeat: -1
+        });
+		
+		this.animRun = this.anims.create({
+            key: 'run',
+            frames: this.anims.generateFrameNumbers('cat', { frames: [ 0, 1 ] }),
+            frameRate: 8,
+            repeat: -1
+        });
 		
 		for (var i = 0; i < 5; i++){
-			this.cat = this.physics.add.image(null, null, 'red');
+			this.cat = this.physics.add.sprite(null, null, 'cat', 2);
 			this.cat.setTint(Phaser.Math.RND.pick(this.colors));
 			//this.cat.setTint(0xff75d8);
 			this.cats.add(this.cat);
+			this.cat.play('idle');
 		}
 		
 		Phaser.Actions.RandomRectangle(this.cats.getChildren(), this.startRect);
@@ -73,6 +89,7 @@ export default class Game extends Phaser.Scene {
 			
 			for (var i = 0; i < this.cats.getLength(); i++){
 				this.physics.moveToObject(this.cats.getChildren()[i], this.targets[i], 100);
+				this.cats.getChildren()[i].play('run');
 			}
 			
 			this.rect.clear();
@@ -101,6 +118,7 @@ export default class Game extends Phaser.Scene {
 		for (var i = 0; i < this.cats.getLength(); i++){
 			if (this.distances[i] < 4){
 				this.cats.getChildren()[i].body.reset(this.targets[i].x, this.targets[i].y);
+				this.cats.getChildren()[i].play('idle', true);
 			}
 		}
 		
