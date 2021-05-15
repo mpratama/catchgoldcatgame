@@ -34,18 +34,24 @@ export default class Game extends Phaser.Scene {
 		
 		this.targets = [0,0,0,0,0,0,0,0,0];
 		this.distances = [0,0,0,0,0,0,0,0,0];
-		this.colors = [0xffffff, 0xb4f8c8, 0xffaebc, 0xa49393, 0xff75d8];
+		this.colors = [0xff595e, 0xb4f8c8, 0xffaebc, 0xa49393, 0xff75d8, 0xffca3a, 0x4d6cfa];
 		
 		this.animIdle = this.anims.create({
             key: 'idle',
             frames: this.anims.generateFrameNumbers('cat', { frames: [ 2, 3 ] }),
-            frameRate: 4,
+            frameRate: 3,
             repeat: -1
         });
 		
-		this.animRun = this.anims.create({
-            key: 'run',
+		this.animRunRight = this.anims.create({
+            key: 'runRight',
             frames: this.anims.generateFrameNumbers('cat', { frames: [ 0, 1 ] }),
+            frameRate: 8,
+            repeat: -1
+        });
+		this.animRunLeft = this.anims.create({
+            key: 'runLeft',
+            frames: this.anims.generateFrameNumbers('cat', { frames: [ 4, 5 ] }),
             frameRate: 8,
             repeat: -1
         });
@@ -56,6 +62,7 @@ export default class Game extends Phaser.Scene {
 			//this.cat.setTint(0xff75d8);
 			this.cats.add(this.cat);
 			this.cat.play('idle');
+			//this.cat.setFlipX(true);
 		}
 		
 		Phaser.Actions.RandomRectangle(this.cats.getChildren(), this.startRect);
@@ -66,6 +73,7 @@ export default class Game extends Phaser.Scene {
 		this.pdY = 0;
 		this.pX = 0;
 		this.pY = 0;
+		//this.rad = 0;
 		
 		// start drawing (player start touch the screen)
 		this.input.on('pointerdown', (pointer) => {
@@ -88,8 +96,14 @@ export default class Game extends Phaser.Scene {
 			}
 			
 			for (var i = 0; i < this.cats.getLength(); i++){
-				this.physics.moveToObject(this.cats.getChildren()[i], this.targets[i], 100);
-				this.cats.getChildren()[i].play('run');
+				this.rad = this.physics.moveToObject(this.cats.getChildren()[i], this.targets[i], 100);
+				if (Phaser.Math.RadToDeg(this.rad) > 90 || Phaser.Math.RadToDeg(this.rad) < -90){
+					this.cats.getChildren()[i].play('runLeft');
+				}
+				else if (Phaser.Math.RadToDeg(this.rad) > -90 || Phaser.Math.RadToDeg(this.rad) < 90){
+					this.cats.getChildren()[i].play('runRight');
+				}
+				
 			}
 			
 			this.rect.clear();
