@@ -24,7 +24,7 @@ export default class Rect extends Phaser.Scene {
 		//Phaser.Actions.RandomRectangle(this.catGroup.getChildren(), this.startRect);
 		
 		this.target = new Phaser.Math.Vector2();
-		this.gambar = this.physics.add.image(100, 100, 'red');
+		//this.gambar = this.physics.add.image(100, 100, 'red');
 		//this.physics.add.image(100, 100, 'red');
 		
 		this.rect = this.add.graphics();
@@ -47,10 +47,10 @@ export default class Rect extends Phaser.Scene {
 			this.pY = pointer.y;
 			this.target.x = Phaser.Math.Between(this.pX - 10, this.pdX + 10);
 			this.target.y = Phaser.Math.Between(this.pY - 10, this.pdY + 10);
-			/* for (var i = 0; i < this.cats.getLength(); i++){
+			for (var i = 0; i < this.cats.getLength(); i++){
 				this.physics.moveToObject(this.cats.getChildren()[i], this.target, 100);
-			} */
-			this.physics.moveToObject(this.gambar, this.target, 100);
+			}
+			//this.physics.moveToObject(this.gambar, this.target, 100);
 		});
 		
 		this.input.on('pointermove', (pointer) => {
@@ -65,12 +65,12 @@ export default class Rect extends Phaser.Scene {
 	update(){
 		
 		//calculate distance between cats and target
-		this.distance = Phaser.Math.Distance.Between(this.gambar.x, this.gambar.y, this.target.x, this.target.y);
+		//this.distance = Phaser.Math.Distance.Between(this.gambar.x, this.gambar.y, this.target.x, this.target.y);
 		
 		// stop the cat
-		if (this.distance < 4){
+		/* if (this.distance < 4){
 			this.gambar.body.reset(this.target.x, this.target.y);
-		}
+		} */
 		
 	}
 	
