@@ -14,6 +14,7 @@ export default class Rect extends Phaser.Scene {
 		this.startRect = new Phaser.Geom.Rectangle(0, 0, 360, 600);
 		this.cats = this.add.group();
 		this.targets = [0,0,0,0,0,0,0,0,0];
+		this.distances = [0,0,0,0,0,0,0,0,0];
 		for (var i = 0; i < 5; i++){
 			this.ngana = this.physics.add.image(null, null, 'red');
 			this.cats.add(this.ngana);
@@ -73,12 +74,19 @@ export default class Rect extends Phaser.Scene {
 	update(){
 		
 		//calculate distance between cats and target
-		//this.distance = Phaser.Math.Distance.Between(this.gambar.x, this.gambar.y, this.target.x, this.target.y);
+		for (var i = 0; i < this.cats.getLength(); i++){
+			this.distance = Phaser.Math.Distance.Between(this.cats.getChildren()[i].x, this.cats.getChildren()[i].y, this.targets[i].x, this.targets[i].y);
+			this.distances[i] = this.distance;
+		}
+		
 		
 		// stop the cat
-		/* if (this.distance < 4){
-			this.gambar.body.reset(this.target.x, this.target.y);
-		} */
+		for (var i = 0; i < this.cats.getLength(); i++){
+			if (this.distances[i] < 4){
+				this.cats.getChildren()[i].body.reset(this.targets[i].x, this.targets[i].y);
+			}
+		}
+		
 		
 	}
 	
