@@ -13,6 +13,7 @@ export default class Rect extends Phaser.Scene {
 	create(){
 		this.startRect = new Phaser.Geom.Rectangle(0, 0, 360, 600);
 		this.cats = this.add.group();
+		this.targets = [0,0,0,0,0,0,0,0,0];
 		for (var i = 0; i < 5; i++){
 			this.ngana = this.physics.add.image(null, null, 'red');
 			this.cats.add(this.ngana);
@@ -23,7 +24,7 @@ export default class Rect extends Phaser.Scene {
 		//this.startRect = new Phaser.Geom.Rectangle(0, 0, 360, 600);
 		//Phaser.Actions.RandomRectangle(this.catGroup.getChildren(), this.startRect);
 		
-		this.target = new Phaser.Math.Vector2();
+		//this.target = new Phaser.Math.Vector2();
 		//this.gambar = this.physics.add.image(100, 100, 'red');
 		//this.physics.add.image(100, 100, 'red');
 		
@@ -45,10 +46,17 @@ export default class Rect extends Phaser.Scene {
 			this.pdY = pointer.downY;
 			this.pX = pointer.x;
 			this.pY = pointer.y;
-			this.target.x = Phaser.Math.Between(this.pX - 10, this.pdX + 10);
-			this.target.y = Phaser.Math.Between(this.pY - 10, this.pdY + 10);
+			/* this.target.x = Phaser.Math.Between(this.pX - 10, this.pdX + 10);
+			this.target.y = Phaser.Math.Between(this.pY - 10, this.pdY + 10); */
 			for (var i = 0; i < this.cats.getLength(); i++){
-				this.physics.moveToObject(this.cats.getChildren()[i], this.target, 100);
+				this.target = new Phaser.Math.Vector2();
+				this.target.x = Phaser.Math.Between(this.pX - 10, this.pdX + 10);
+				this.target.y = Phaser.Math.Between(this.pY - 10, this.pdY + 10);
+				this.targets[i] = this.target;
+				
+			}
+			for (var i = 0; i < this.cats.getLength(); i++){
+				this.physics.moveToObject(this.cats.getChildren()[i], this.targets[i], 100);
 			}
 			//this.physics.moveToObject(this.gambar, this.target, 100);
 		});
