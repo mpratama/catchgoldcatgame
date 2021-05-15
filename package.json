@@ -1,0 +1,17 @@
+{
+  "name": "phaserNpm",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "parcel src/index.html",
+    "clean": "rm -rvf dist/"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "phaser": "^3.54.0",
+    "phaser3-rex-plugins": "^1.1.46"
+  }
+}
