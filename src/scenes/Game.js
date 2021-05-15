@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import red from '../assets/red.png';
+import red from '../assets/cat.png';
 import fieldMap from '../assets/map.json';
 import atlas from '../assets/atlas.png';
 import AnimatedTiles from '../js/AnimatedTiles.min.js';
@@ -33,9 +33,12 @@ export default class Game extends Phaser.Scene {
 		
 		this.targets = [0,0,0,0,0,0,0,0,0];
 		this.distances = [0,0,0,0,0,0,0,0,0];
+		this.colors = [0xffffff, 0xb4f8c8, 0xffaebc, 0xa49393, 0xff75d8]
 		
 		for (var i = 0; i < 5; i++){
 			this.cat = this.physics.add.image(null, null, 'red');
+			this.cat.setTint(Phaser.Math.RND.pick(this.colors));
+			//this.cat.setTint(0xff75d8);
 			this.cats.add(this.cat);
 		}
 		
