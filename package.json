@@ -6,7 +6,7 @@
   "scripts": {
     "test": "parcel src/index.html",
     "clean": "rm -rvf dist/",
-    "build": "parcel build src/index.html"
+    "build": "parcel build src/index.html --public-url ."
   },
   "keywords": [],
   "author": "",
