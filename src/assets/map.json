@@ -33,7 +33,7 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":3,
+ "nextlayerid":4,
  "nextobjectid":1,
  "orientation":"orthogonal",
  "renderorder":"right-down",
@@ -89,6 +89,19 @@
                          "tileid":14
                         }],
                  "id":3,
+                 "probability":0.00999999977648258
+                }, 
+                {
+                 "id":4,
+                 "properties":[
+                        {
+                         "name":"collides",
+                         "type":"bool",
+                         "value":true
+                        }]
+                }, 
+                {
+                 "id":5,
                  "probability":0.00999999977648258
                 }, 
                 {

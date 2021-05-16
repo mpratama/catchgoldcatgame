@@ -1,15 +1,8 @@
 import Phaser from 'phaser';
-//import TestScene from './TestScene';
-//import TestTilemap from './TestTilemap';
-//import Rect from './Rect';
+
 import Game from './Game';
-import BBCodeTextPlugin from 'phaser3-rex-plugins/plugins/bbcodetext-plugin.js';
-import DragPlugin from 'phaser3-rex-plugins/plugins/drag-plugin.js';
-import VirtualJoystickPlugin from 'phaser3-rex-plugins/plugins/virtualjoystick-plugin.js';
+import ShakePositionPlugin from 'phaser3-rex-plugins/plugins/shakeposition-plugin.js';
 import SpinnerPlugin from 'phaser3-rex-plugins/templates/spinner/spinner-plugin.js';
-import GrayScalePostFx from 'phaser3-rex-plugins/plugins/grayscalepipeline.js';
-import OutlinePostFx from 'phaser3-rex-plugins/plugins/outlinepipeline.js';
-import FlashPlugin from 'phaser3-rex-plugins/plugins/flash-plugin.js';
 
 export default {
 	width: 180,
@@ -29,7 +22,6 @@ export default {
 			debug: false
 			}
 	},
-	/*pipeline: [GrayScalePostFx, OutlinePostFx],
 	plugins: {
 		scene: [
 		{
@@ -40,26 +32,12 @@ export default {
 		],
 		global: [
 		{
-			key: 'rexBBCodeTextPlugin',
-			plugin: BBCodeTextPlugin,
-			start: true
-		},
-		{
-			key: 'rexDrag',
-			plugin: DragPlugin,
-			start: true
-		},
-		{
-			key: 'rexVirtualJoystick',
-			plugin: VirtualJoystickPlugin,
-			start: true
-		},
-		{
-			key: 'rexFlash',
-			plugin: FlashPlugin,
+			key: 'rexShakePosition',
+			plugin: ShakePositionPlugin,
 			start: true
 		}
+		
 			]
-	}, */
+	},
 	scene: [Game]
 };

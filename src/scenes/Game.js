@@ -2,7 +2,8 @@ import Phaser from 'phaser';
 import fieldMap from '../assets/map.json';
 import atlas from '../assets/atlas.png';
 import AnimatedTiles from '../js/AnimatedTiles.min.js';
-//import senyum from '../assets/senyum.jpg';
+import ShakePosition from 'phaser3-rex-plugins/plugins/shakeposition.js';
+import senyum from '../assets/senyum.jpg';
 
 export default class Game extends Phaser.Scene {
 	constructor(){
@@ -14,7 +15,7 @@ export default class Game extends Phaser.Scene {
 		this.load.scenePlugin('animatedTiles', AnimatedTiles, 'animatedTiles', 'animatedTiles');
 		this.load.tilemapTiledJSON('map', fieldMap);
 		this.load.image('tiles', atlas);
-		//this.load.image('smile', senyum);
+		this.load.image('smile', senyum);
 	}
 	
 	create(){
@@ -26,7 +27,8 @@ export default class Game extends Phaser.Scene {
 		this.layer2 = this.map.createLayer('vegetation', this.tileset, 0, 0);
 		this.sys.animatedTiles.init(this.map);
 		
-		this.startRect = new Phaser.Geom.Rectangle(0, 0, 150, 300);
+		this.startRect = new Phaser.Geom.Rectangle(0, 0, 150, 260);
+		this.playArea = this.add.rectangle(0 , 0, 180, 275).setDisplayOrigin(0.5, 0.5).setInteractive();
 		
 		this.cats = this.add.group();
 		
@@ -57,10 +59,8 @@ export default class Game extends Phaser.Scene {
 		for (var i = 0; i < 5; i++){
 			this.cat = this.physics.add.sprite(null, null, 'cat', 2);
 			this.cat.setTint(Phaser.Math.RND.pick(this.colors));
-			//this.cat.setTint(0xff75d8);
 			this.cats.add(this.cat);
 			this.cat.play('idle');
-			//this.cat.setFlipX(true);
 		}
 		
 		Phaser.Actions.RandomRectangle(this.cats.getChildren(), this.startRect);
@@ -71,14 +71,21 @@ export default class Game extends Phaser.Scene {
 		this.pdY = 0;
 		this.pX = 0;
 		this.pY = 0;
-		//this.rad = 0;
+		this.catNum = 0;
+		
+		this.shake = this.plugins.get('rexShakePosition').add(this.layer2, {
+			mode: 1,
+			duration: 5000,
+			magnitude: 1,
+			magnitudeMode: 1
+		});
 		
 		// start drawing (player start touch the screen)
-		this.input.on('pointerdown', (pointer) => {
+		this.playArea.on('pointerdown', (pointer) => {
 			this.draw = true;
 		});
 		
-		this.input.on('pointerup', (pointer) => {
+		this.playArea.on('pointerup', (pointer) => {
 			this.draw = false;
 			this.pdX = pointer.downX;
 			this.pdY = pointer.downY;
@@ -108,16 +115,33 @@ export default class Game extends Phaser.Scene {
 			
 		});
 		
-		this.input.on('pointermove', (pointer) => {
+		this.playArea.on('pointermove', (pointer) => {
 			if (this.draw){
 				this.rect.clear();
 				this.rect.lineStyle(2, 0x000000, 0.5);
 				this.rect.strokeRect(pointer.downX, pointer.downY, pointer.x - pointer.downX, pointer.y - pointer.downY);
 			}
 		});
+		
+		this.footer = this.add.rectangle(0, 270, 185, 50, 0x000000, 1).setDisplayOrigin(0.5, 0.5);
+		this.catStats = this.add.text(10, 275, "Life: " + this.catNum, {
+			fontSize: 10,
+			fontFamily: 'Arial',
+			color: '#000000',
+			strokeThickness: 2
+		});
+		
+		this.button = this.add.image(100, 285, 'smile').setScale(1.5).setInteractive();
+		this.button.on('pointerdown', () => {
+			this.cats.getChildren()[0].destroy();
+		});
 	}
 	
+	
+	
 	update(){
+		this.catNum = this.cats.getLength();
+		this.catStats.setText("Life: " + this.catNum);
 		
 		//calculate distance between cats and target
 		for (var i = 0; i < this.cats.getLength(); i++){
