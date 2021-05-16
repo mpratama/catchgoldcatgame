@@ -156,13 +156,33 @@ export default class Game extends Phaser.Scene {
 			strokeThickness: 2
 		});
 		
-		this.summonButton = this.add.text(65, 290, "Clone 1 Cat\n\(-50 point\)", {
+		this.startText = this.add.text(30, 30, "Avoid meteor! Get gold!", {
+			fontSize: 11,
+			fontFamily: 'Arial',
+			color: '#000000',
+			strokeThickness: 2
+		});
+		
+		this.summonButton = this.add.text(65, 290, "Buy 1 Cat\n\(-50 Gold\)", {
 			fontSize: 10,
 			fontFamily: 'Arial',
 			color: '#000000',
 			strokeThickness: 1,
 			backgroundColor: '#ffffff'
 		}).setInteractive();
+		
+		this.replayButton = this.add.text(50, 110, "Game Over\nPress to play again\n", {
+			fontSize: 10,
+			fontFamily: 'Arial',
+			color: '#000000',
+			strokeThickness: 1,
+			backgroundColor: '#ffffff'
+		}).setInteractive().setVisible(false);
+		
+		this.replayButton.on('pointerdown', () => {
+			//console.log("kunyuk");
+			this.scene.restart();
+		});
 		
 		this.summonButton.on('pointerdown', () => {			
 			if (this.cats.getLength() < 9 && this.points >= 50){
@@ -176,11 +196,20 @@ export default class Game extends Phaser.Scene {
 			}
 		});
 		
+		this.time.delayedCall(1000, this.flashing, [], this);
+		this.time.delayedCall(3000, () => {
+			this.startText.destroy();
+		}, [], this);
 		this.time.delayedCall(8000, this.spawnGold, [], this);
 		this.time.delayedCall(5000, this.spawnMeteor, [], this);
 		this.time.delayedCall(7500, this.spawnMeteor2, [], this);
 		
 		
+	}
+	
+	flashing(){
+		this.txtFlash = this.plugins.get('rexFlash').add(this.startText);
+		this.txtFlash.flash();
 	}
 	
 	spawnMeteor(){
@@ -331,14 +360,17 @@ export default class Game extends Phaser.Scene {
 		
 	}	
 	
-	update(){
-		
+	update(){		
 		this.catNum = this.cats.getLength();
+		if (this.catNum == 0){
+			this.replayButton.setVisible(true);
+			this.summonButton.setVisible(false);
+		}
 		this.catStats.setText("Life: " + this.catNum);
 		if (this.catNum == 9){
 			this.catStats.setText("Life: " + this.catNum + " MAX!");
 		}
-		this.scoreText.setText("Score: " + this.points);
+		this.scoreText.setText("Gold: " + this.points);
 		
 		//calculate distance between cats and target
 		for (var i = 0; i < this.cats.getLength(); i++){

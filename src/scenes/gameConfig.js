@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 
 import Game from './Game';
 import ShakePositionPlugin from 'phaser3-rex-plugins/plugins/shakeposition-plugin.js';
+import FlashPlugin from 'phaser3-rex-plugins/plugins/flash-plugin';
 
 export default {
 	width: 180,
@@ -27,9 +28,13 @@ export default {
 			key: 'rexShakePosition',
 			plugin: ShakePositionPlugin,
 			start: true
+		},
+		{
+			key: 'rexFlash',
+			plugin: FlashPlugin,
+			start: true
 		}
-		
-			]
+		]
 	},
 	scene: [Game]
 };
