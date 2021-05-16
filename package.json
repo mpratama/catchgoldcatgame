@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "parcel src/index.html",
-    "clean": "rm -rvf dist/"
+    "clean": "rm -rvf dist/",
+    "build": "parcel build src/index.html"
   },
   "keywords": [],
   "author": "",
