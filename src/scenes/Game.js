@@ -3,7 +3,7 @@ import fieldMap from '../assets/map.json';
 import atlas from '../assets/atlas.png';
 import AnimatedTiles from '../js/AnimatedTiles.min.js';
 import ShakePosition from 'phaser3-rex-plugins/plugins/shakeposition.js';
-//import senyum from '../assets/senyum.jpg';
+import particle from '../assets/particle.png';
 
 export default class Game extends Phaser.Scene {
 	constructor(){
@@ -15,6 +15,7 @@ export default class Game extends Phaser.Scene {
 		this.load.scenePlugin('animatedTiles', AnimatedTiles, 'animatedTiles', 'animatedTiles');
 		this.load.tilemapTiledJSON('map', fieldMap);
 		this.load.image('tiles', atlas);
+		this.load.image('dust', particle);
 	}
 	
 	create(){
@@ -187,6 +188,9 @@ export default class Game extends Phaser.Scene {
 		this.spawnX = Phaser.Math.Between(20, 150);
 		this.spawnY = Phaser.Math.Between(-100, -200);
 		this.meteor = this.physics.add.sprite(this.spawnX, this.spawnY, 'cat', 4).setScale(1.5);
+		
+		
+		
 		this.overlapMeteor = this.physics.add.overlap(this.cats, this.meteor, () => {
 			this.cameras.main.flashEffect.start(250, 219, 31, 72);
 			this.cats.getChildren()[0].destroy();	
@@ -203,14 +207,27 @@ export default class Game extends Phaser.Scene {
 			duration: 1000,
 			onStart: () => {
 				this.overlapMeteor.active = false;
+				this.dust1 = this.add.particles('dust');
+				this.explod1 = this.dust1.createEmitter({
+					angle: {min: 240, max: 300},
+					speed: 100,
+					gravityY: 300,
+					lifespan: {min: 300, max: 500},
+					alpha: { start: 1, end: 0 },
+					//frequency: 170,
+					scale: {min: 0.1, max: 0.5},
+					quantity: 10
+				});
 			},
 			onComplete: () => {
+				this.explod1.explode(15, this.meteor.x, this.meteor.y);
 				this.overlapMeteor.active = true;
 				this.vegetationShake.shake();
 				this.groundShake.shake();
 				this.time.delayedCall(500, () => {
 					this.meteor.destroy();
 					this.spawnMeteor();
+					
 				}, [], this);
 				//this.gold.setTint(0xf8d210);
 			},
@@ -241,8 +258,20 @@ export default class Game extends Phaser.Scene {
 			duration: 1000,
 			onStart: () => {
 				this.overlapMeteor2.active = false;
+				this.dust2 = this.add.particles('dust');
+				this.explod2 = this.dust2.createEmitter({
+					angle: {min: 240, max: 300},
+					speed: 100,
+					gravityY: 300,
+					lifespan: {min: 300, max: 500},
+					alpha: { start: 1, end: 0 },
+					//frequency: 170,
+					scale: {min: 0.1, max: 0.5},
+					quantity: 10
+				});
 			},
 			onComplete: () => {
+				this.explod2.explode(10, this.meteor2.x, this.meteor2.y);
 				this.overlapMeteor2.active = true;
 				this.vegetationShake.shake();
 				this.groundShake.shake();
@@ -277,8 +306,20 @@ export default class Game extends Phaser.Scene {
 			duration: 1500,
 			onStart: () => {
 				this.overlapCoin.active = false;
+				this.dust3 = this.add.particles('dust');
+				this.explod3 = this.dust3.createEmitter({
+					angle: {min: 240, max: 300},
+					speed: 100,
+					gravityY: 300,
+					lifespan: {min: 300, max: 500},
+					alpha: { start: 1, end: 0 },
+					//frequency: 170,
+					scale: {min: 0.1, max: 0.5},
+					quantity: 10
+				});
 			},
 			onComplete: () => {
+				this.explod3.explode(10, this.gold.x, this.gold.y);
 				this.overlapCoin.active = true;
 				this.groundShake.shake();
 				this.vegetationShake.shake();
