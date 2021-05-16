@@ -3,6 +3,7 @@ import fieldMap from '../assets/map.json';
 import atlas from '../assets/atlas.png';
 import AnimatedTiles from '../js/AnimatedTiles.min.js';
 import ShakePosition from 'phaser3-rex-plugins/plugins/shakeposition.js';
+import senyum from '../assets/senyum.jpg';
 
 export default class Game extends Phaser.Scene {
 	constructor(){
@@ -14,6 +15,7 @@ export default class Game extends Phaser.Scene {
 		this.load.scenePlugin('animatedTiles', AnimatedTiles, 'animatedTiles', 'animatedTiles');
 		this.load.tilemapTiledJSON('map', fieldMap);
 		this.load.image('tiles', atlas);
+		this.load.image('smile', senyum);
 	}
 	
 	create(){
@@ -27,6 +29,7 @@ export default class Game extends Phaser.Scene {
 		
 		this.startRect = new Phaser.Geom.Rectangle(0, 0, 150, 260);
 		this.playArea = this.add.rectangle(0 , 0, 180, 275).setDisplayOrigin(0.5, 0.5).setInteractive();
+		//this.coin = this.physics.add.image(100, 100, 'smile');
 		
 		this.cats = this.add.group();
 		
@@ -70,7 +73,7 @@ export default class Game extends Phaser.Scene {
 		this.pX = 0;
 		this.pY = 0;
 		this.catNum = 0;
-		this.points = 300;
+		this.points = 0;
 		
 		// start drawing (player start touch the screen)
 		this.playArea.on('pointerdown', (pointer) => {
@@ -155,11 +158,21 @@ export default class Game extends Phaser.Scene {
 				this.lifeShake.shake();
 			}
 		});
+		
+		
 	}
 	
-	
+	spawnCoin(){
+		this.coin = this.physics.add.image(10, 20, 'smile').setScale(0.5);
+		this.physics.add.overlap(this.cats, this.coin, () => {
+			this.points += 10;
+			this.coin.destroy();
+			this.timedEvent = this.time.delayedCall(3000, this.spawnCoin, [], this);
+		}, null, this);
+	}	
 	
 	update(){
+		
 		this.catNum = this.cats.getLength();
 		this.catStats.setText("Life: " + this.catNum);
 		if (this.catNum == 9){
