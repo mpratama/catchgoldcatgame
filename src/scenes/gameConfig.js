@@ -7,9 +7,9 @@ import FlashPlugin from 'phaser3-rex-plugins/plugins/flash-plugin';
 export default {
 	width: 180,
 	height: 320,
-	title: "Phaser dengan ParcelJS guys",
+	title: "Untitled Cat Meteor Game",
 	pixelArt: true,
-	url: "yesbesoklibur.com",
+	url: "https://github.com/mpratama",
 	backgroundColor: 0xffffff,
 	scale: {
 		mode: Phaser.Scale.FIT,

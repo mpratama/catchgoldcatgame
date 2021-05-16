@@ -4,10 +4,11 @@ import atlas from '../assets/atlas.png';
 import AnimatedTiles from '../js/AnimatedTiles.min.js';
 import ShakePosition from 'phaser3-rex-plugins/plugins/shakeposition.js';
 import particle from '../assets/particle.png';
-import explosion from '../assets/explosion.wav';
-import getGold from '../assets/pickup_gold.wav';
-import getHit from '../assets/hit.wav';
-import buyCat from '../assets/buy_cat.wav';
+import explosion from '../assets/explosion.mp3';
+import getGold from '../assets/pickup_gold.mp3';
+import getHit from '../assets/hit.mp3';
+import buyCat from '../assets/buy_cat.mp3';
+import beat from '../assets/beat.mp3';
 
 export default class Game extends Phaser.Scene {
 	constructor(){
@@ -24,6 +25,7 @@ export default class Game extends Phaser.Scene {
 		this.load.audio('getGold', getGold);
 		this.load.audio('getHit', getHit);
 		this.load.audio('buyCat', buyCat);
+		this.load.audio('beat', beat);
 	}
 	
 	create(){
@@ -58,6 +60,10 @@ export default class Game extends Phaser.Scene {
 		this.getGold = this.sound.add('getGold');
 		this.getHit = this.sound.add('getHit');
 		this.buyCat = this.sound.add('buyCat');
+		this.beat = this.sound.add('beat', {
+			loop: true
+		});
+		this.beat.play();
 		
 		this.cats = this.add.group();
 		
@@ -85,7 +91,7 @@ export default class Game extends Phaser.Scene {
             repeat: -1
         });
 		
-		for (var i = 0; i < 3; i++){
+		for (var i = 0; i < 5; i++){
 			this.cat = this.physics.add.sprite(null, null, 'cat', 2);
 			this.cat.setTint(Phaser.Math.RND.pick(this.colors));
 			//this.cat.body.setBoundsRectangle(this.invisibleBorder);
@@ -230,9 +236,10 @@ export default class Game extends Phaser.Scene {
 		this.ang1 = Phaser.Math.Between(-180, 180);
 		this.spawnX = Phaser.Math.Between(20, 150);
 		this.spawnY = Phaser.Math.Between(-100, -200);
-		this.meteor = this.physics.add.sprite(this.spawnX, this.spawnY, 'cat', 4).setScale(1.5);
-		
-		
+		this.fallX1 = Phaser.Math.Between(20, 160);
+		this.fallY1 = Phaser.Math.Between(20, 260);
+		this.shadow1 = this.add.ellipse(this.fallX1, this.fallY1, 10, 5, 0x000000, 1).setAlpha(0);
+		this.meteor = this.physics.add.sprite(this.spawnX, this.spawnY, 'cat', 4).setScale(1.5);		
 		
 		this.overlapMeteor = this.physics.add.overlap(this.cats, this.meteor, () => {
 			this.getHit.play();
@@ -243,12 +250,23 @@ export default class Game extends Phaser.Scene {
 		}, null, this);
 		
 		this.tweens.add({
+			targets: this.shadow1,
+			x: this.fallX1,
+			y: this.fallY1 + 5,
+			alpha: 1,
+			duration: 700,
+			/* onComplete: () => {
+				this.shadow1.destroy();
+			} */
+		});
+		
+		this.tweens.add({
 			targets: this.meteor,
-			x: Phaser.Math.Between(20, 160),
-			y: Phaser.Math.Between(20, 260),
+			x: this.fallX1,
+			y: this.fallY1,
 			angle: this.ang1,
 			ease: 'Quad.easeIn',
-			duration: 1000,
+			duration: 700,
 			onStart: () => {
 				this.overlapMeteor.active = false;
 				this.dust1 = this.add.particles('dust');
@@ -270,6 +288,7 @@ export default class Game extends Phaser.Scene {
 				this.vegetationShake.shake();
 				this.groundShake.shake();
 				this.time.delayedCall(500, () => {
+					this.shadow1.destroy();
 					this.meteor.destroy();
 					this.spawnMeteor();
 					
@@ -286,19 +305,32 @@ export default class Game extends Phaser.Scene {
 		this.ang2 = Phaser.Math.Between(-180, 180);
 		this.spawnX2 = Phaser.Math.Between(20, 150);
 		this.spawnY2 = Phaser.Math.Between(-100, -200);
+		this.fallX2 = Phaser.Math.Between(20, 160);
+		this.fallY2 = Phaser.Math.Between(20, 260);
+		this.shadow2 = this.add.ellipse(this.fallX2, this.fallY2, 10, 5, 0x000000, 1).setAlpha(0);
 		this.meteor2 = this.physics.add.sprite(this.spawnX2, this.spawnY2, 'cat', 4).setScale(1.5);
 		this.overlapMeteor2 = this.physics.add.overlap(this.cats, this.meteor2, () => {
 			this.getHit.play();
 			this.cameras.main.flashEffect.start(250, 219, 31, 72);
 			this.cats.getChildren()[0].destroy();	
 			this.meteor2.destroy();
-			//this.timedEvent = this.time.delayedCall(2000, this.spawnGold, [], this);
 		}, null, this);
 		
 		this.tweens.add({
+			targets: this.shadow2,
+			x: this.fallX2,
+			y: this.fallY2 + 5,
+			alpha: 1,
+			duration: 1000,
+			/* onComplete: () => {
+				this.shadow1.destroy();
+			} */
+		});
+		
+		this.tweens.add({
 			targets: this.meteor2,
-			x: Phaser.Math.Between(20, 160),
-			y: Phaser.Math.Between(20, 260),
+			x: this.fallX2,
+			y: this.fallY2,
 			angle: this.ang2,
 			ease: 'Quad.easeIn',
 			duration: 1000,
@@ -323,6 +355,7 @@ export default class Game extends Phaser.Scene {
 				this.vegetationShake.shake();
 				this.groundShake.shake();
 				this.time.delayedCall(500, () => {
+					this.shadow2.destroy();
 					this.meteor2.destroy();
 					this.spawnMeteor2();
 				}, [], this);
@@ -337,8 +370,12 @@ export default class Game extends Phaser.Scene {
 	spawnGold(){
 		this.spawnX = Phaser.Math.Between(20, 150);
 		this.spawnY = Phaser.Math.Between(-10, -50);
+		this.fallX3 = Phaser.Math.Between(20, 160);
+		this.fallY3 = Phaser.Math.Between(20, 260);
+		this.shadow3 = this.add.ellipse(this.fallX3, this.fallY3, 10, 5, 0x000000, 1).setAlpha(0);
 		this.gold = this.physics.add.sprite(this.spawnX, this.spawnY, 'cat', 4).setScale(1.5);
 		this.overlapCoin = this.physics.add.overlap(this.cats, this.gold, () => {
+			this.shadow3.destroy();
 			this.getGold.play();
 			this.points += 10;
 			this.gold.destroy();
@@ -346,9 +383,20 @@ export default class Game extends Phaser.Scene {
 		}, null, this);
 		
 		this.tweens.add({
+			targets: this.shadow3,
+			x: this.fallX3,
+			y: this.fallY3 + 5,
+			alpha: 1,
+			duration: 1500,
+			/* onComplete: () => {
+				this.shadow1.destroy();
+			} */
+		});
+		
+		this.tweens.add({
 			targets: this.gold,
-			x: Phaser.Math.Between(20, 160),
-			y: Phaser.Math.Between(20, 260),
+			x: this.fallX3,
+			y: this.fallY3,
 			angle: 90,
 			ease: 'Quint.easeIn',
 			duration: 1500,
@@ -385,6 +433,7 @@ export default class Game extends Phaser.Scene {
 		if (this.catNum == 0){
 			this.replayButton.setVisible(true);
 			this.summonButton.setVisible(false);
+			this.beat.stop();
 		}
 		this.catStats.setText("Life: " + this.catNum);
 		if (this.catNum == 9){
