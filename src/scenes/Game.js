@@ -4,6 +4,10 @@ import atlas from '../assets/atlas.png';
 import AnimatedTiles from '../js/AnimatedTiles.min.js';
 import ShakePosition from 'phaser3-rex-plugins/plugins/shakeposition.js';
 import particle from '../assets/particle.png';
+import explosion from '../assets/explosion.wav';
+import getGold from '../assets/pickup_gold.wav';
+import getHit from '../assets/hit.wav';
+import buyCat from '../assets/buy_cat.wav';
 
 export default class Game extends Phaser.Scene {
 	constructor(){
@@ -16,6 +20,10 @@ export default class Game extends Phaser.Scene {
 		this.load.tilemapTiledJSON('map', fieldMap);
 		this.load.image('tiles', atlas);
 		this.load.image('dust', particle);
+		this.load.audio('explode', explosion);
+		this.load.audio('getGold', getGold);
+		this.load.audio('getHit', getHit);
+		this.load.audio('buyCat', buyCat);
 	}
 	
 	create(){
@@ -44,7 +52,12 @@ export default class Game extends Phaser.Scene {
 		this.startRect = new Phaser.Geom.Rectangle(0, 0, 150, 260);
 		this.playArea = this.add.rectangle(0 , 0, 180, 275).setDisplayOrigin(0.5, 0.5).setInteractive();
 		
-		this.invisibleBorder = new Phaser.Geom.Rectangle(2, 1, 177, 267);
+		//this.invisibleBorder = new Phaser.Geom.Rectangle(2, 1, 177, 267);
+		
+		this.explode = this.sound.add('explode');
+		this.getGold = this.sound.add('getGold');
+		this.getHit = this.sound.add('getHit');
+		this.buyCat = this.sound.add('buyCat');
 		
 		this.cats = this.add.group();
 		
@@ -186,6 +199,7 @@ export default class Game extends Phaser.Scene {
 		
 		this.summonButton.on('pointerdown', () => {			
 			if (this.cats.getLength() < 9 && this.points >= 50){
+				this.buyCat.play();
 				this.points -= 50;
 				this.cat = this.physics.add.sprite(Phaser.Math.Between(this.pX - 10, this.pX + 10), Phaser.Math.Between(this.pY - 10, this.pY + 10), 'cat', 2);
 				this.cat.setTint(Phaser.Math.RND.pick(this.colors));
@@ -221,6 +235,7 @@ export default class Game extends Phaser.Scene {
 		
 		
 		this.overlapMeteor = this.physics.add.overlap(this.cats, this.meteor, () => {
+			this.getHit.play();
 			this.cameras.main.flashEffect.start(250, 219, 31, 72);
 			this.cats.getChildren()[0].destroy();	
 			this.meteor.destroy();
@@ -249,6 +264,7 @@ export default class Game extends Phaser.Scene {
 				});
 			},
 			onComplete: () => {
+				this.explode.play();
 				this.explod1.explode(15, this.meteor.x, this.meteor.y);
 				this.overlapMeteor.active = true;
 				this.vegetationShake.shake();
@@ -272,6 +288,7 @@ export default class Game extends Phaser.Scene {
 		this.spawnY2 = Phaser.Math.Between(-100, -200);
 		this.meteor2 = this.physics.add.sprite(this.spawnX2, this.spawnY2, 'cat', 4).setScale(1.5);
 		this.overlapMeteor2 = this.physics.add.overlap(this.cats, this.meteor2, () => {
+			this.getHit.play();
 			this.cameras.main.flashEffect.start(250, 219, 31, 72);
 			this.cats.getChildren()[0].destroy();	
 			this.meteor2.destroy();
@@ -300,6 +317,7 @@ export default class Game extends Phaser.Scene {
 				});
 			},
 			onComplete: () => {
+				this.explode.play();
 				this.explod2.explode(10, this.meteor2.x, this.meteor2.y);
 				this.overlapMeteor2.active = true;
 				this.vegetationShake.shake();
@@ -321,6 +339,7 @@ export default class Game extends Phaser.Scene {
 		this.spawnY = Phaser.Math.Between(-10, -50);
 		this.gold = this.physics.add.sprite(this.spawnX, this.spawnY, 'cat', 4).setScale(1.5);
 		this.overlapCoin = this.physics.add.overlap(this.cats, this.gold, () => {
+			this.getGold.play();
 			this.points += 10;
 			this.gold.destroy();
 			this.timedEvent = this.time.delayedCall(2000, this.spawnGold, [], this);
@@ -348,6 +367,7 @@ export default class Game extends Phaser.Scene {
 				});
 			},
 			onComplete: () => {
+				this.explode.play();
 				this.explod3.explode(10, this.gold.x, this.gold.y);
 				this.overlapCoin.active = true;
 				this.groundShake.shake();
