@@ -3,7 +3,6 @@ import fieldMap from '../assets/map.json';
 import atlas from '../assets/atlas.png';
 import AnimatedTiles from '../js/AnimatedTiles.min.js';
 import ShakePosition from 'phaser3-rex-plugins/plugins/shakeposition.js';
-import senyum from '../assets/senyum.jpg';
 
 export default class Game extends Phaser.Scene {
 	constructor(){
@@ -15,7 +14,6 @@ export default class Game extends Phaser.Scene {
 		this.load.scenePlugin('animatedTiles', AnimatedTiles, 'animatedTiles', 'animatedTiles');
 		this.load.tilemapTiledJSON('map', fieldMap);
 		this.load.image('tiles', atlas);
-		this.load.image('smile', senyum);
 	}
 	
 	create(){
@@ -56,7 +54,7 @@ export default class Game extends Phaser.Scene {
             repeat: -1
         });
 		
-		for (var i = 0; i < 5; i++){
+		for (var i = 0; i < 2; i++){
 			this.cat = this.physics.add.sprite(null, null, 'cat', 2);
 			this.cat.setTint(Phaser.Math.RND.pick(this.colors));
 			this.cats.add(this.cat);
@@ -72,13 +70,7 @@ export default class Game extends Phaser.Scene {
 		this.pX = 0;
 		this.pY = 0;
 		this.catNum = 0;
-		
-		this.shake = this.plugins.get('rexShakePosition').add(this.layer2, {
-			mode: 1,
-			duration: 5000,
-			magnitude: 1,
-			magnitudeMode: 1
-		});
+		this.points = 300;
 		
 		// start drawing (player start touch the screen)
 		this.playArea.on('pointerdown', (pointer) => {
@@ -112,6 +104,7 @@ export default class Game extends Phaser.Scene {
 			}
 			
 			this.rect.clear();
+			this.summonButton.setVisible(false);
 			
 		});
 		
@@ -124,16 +117,43 @@ export default class Game extends Phaser.Scene {
 		});
 		
 		this.footer = this.add.rectangle(0, 270, 185, 50, 0x000000, 1).setDisplayOrigin(0.5, 0.5);
-		this.catStats = this.add.text(10, 275, "Life: " + this.catNum, {
-			fontSize: 10,
+		this.catStats = this.add.text(10, 275, "Cat: " + this.catNum, {
+			fontSize: 12,
+			fontFamily: 'Arial',
+			color: '#000000',
+			strokeThickness: 2
+		});
+		this.lifeShake = this.plugins.get('rexShakePosition').add(this.catStats, {
+			mode: 1,
+			duration: 100,
+			magnitude: 2,
+			magnitudeMode: 0
+		});
+		
+		this.scoreText = this.add.text(10, 295, "Score: " + this.points, {
+			fontSize: 12,
 			fontFamily: 'Arial',
 			color: '#000000',
 			strokeThickness: 2
 		});
 		
-		this.button = this.add.image(100, 285, 'smile').setScale(1.5).setInteractive();
-		this.button.on('pointerdown', () => {
-			this.cats.getChildren()[0].destroy();
+		this.summonButton = this.add.text(110, 275, "Clone 1 Cat\n\(-50 point\)", {
+			fontSize: 10,
+			fontFamily: 'Arial',
+			color: '#000000',
+			strokeThickness: 1,
+			backgroundColor: '#ffffff'
+		}).setInteractive();
+		
+		this.summonButton.on('pointerdown', () => {			
+			if (this.cats.getLength() < 9 && this.points >= 50){
+				this.points -= 50;
+				this.cat = this.physics.add.sprite(this.pX, this.pY, 'cat', 2);
+				this.cat.setTint(Phaser.Math.RND.pick(this.colors));
+				this.cats.add(this.cat);
+				this.cat.play('idle');
+				this.lifeShake.shake();
+			}
 		});
 	}
 	
@@ -142,6 +162,10 @@ export default class Game extends Phaser.Scene {
 	update(){
 		this.catNum = this.cats.getLength();
 		this.catStats.setText("Life: " + this.catNum);
+		if (this.catNum == 9){
+			this.catStats.setText("Life: " + this.catNum + " MAX!");
+		}
+		this.scoreText.setText("Score: " + this.points);
 		
 		//calculate distance between cats and target
 		for (var i = 0; i < this.cats.getLength(); i++){
@@ -155,10 +179,12 @@ export default class Game extends Phaser.Scene {
 			if (this.distances[i] < 4){
 				this.cats.getChildren()[i].body.reset(this.targets[i].x, this.targets[i].y);
 				this.cats.getChildren()[i].play('idle', true);
+				
+				if (!this.draw && this.distance == 0){
+					this.summonButton.setVisible(true);
+				}
 			}
 		}
-		
-		
 	}
 	
 }
