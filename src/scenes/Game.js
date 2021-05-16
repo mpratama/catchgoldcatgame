@@ -1,5 +1,4 @@
 import Phaser from 'phaser';
-import cat from '../assets/cat.png';
 import fieldMap from '../assets/map.json';
 import atlas from '../assets/atlas.png';
 import AnimatedTiles from '../js/AnimatedTiles.min.js';
@@ -11,8 +10,7 @@ export default class Game extends Phaser.Scene {
 	}
 	
 	preload(){
-		//this.load.image('red', red);
-		this.load.spritesheet('cat', cat, { frameWidth: 8, frameHeight: 8 });
+		this.load.spritesheet('cat', atlas, { frameWidth: 8, frameHeight: 8 });
 		this.load.scenePlugin('animatedTiles', AnimatedTiles, 'animatedTiles', 'animatedTiles');
 		this.load.tilemapTiledJSON('map', fieldMap);
 		this.load.image('tiles', atlas);
@@ -38,20 +36,20 @@ export default class Game extends Phaser.Scene {
 		
 		this.animIdle = this.anims.create({
             key: 'idle',
-            frames: this.anims.generateFrameNumbers('cat', { frames: [ 2, 3 ] }),
+            frames: this.anims.generateFrameNumbers('cat', { frames: [ 8, 9 ] }),
             frameRate: 3,
             repeat: -1
         });
 		
 		this.animRunRight = this.anims.create({
             key: 'runRight',
-            frames: this.anims.generateFrameNumbers('cat', { frames: [ 0, 1 ] }),
+            frames: this.anims.generateFrameNumbers('cat', { frames: [ 6, 7 ] }),
             frameRate: 8,
             repeat: -1
         });
 		this.animRunLeft = this.anims.create({
             key: 'runLeft',
-            frames: this.anims.generateFrameNumbers('cat', { frames: [ 4, 5 ] }),
+            frames: this.anims.generateFrameNumbers('cat', { frames: [ 10, 11 ] }),
             frameRate: 8,
             repeat: -1
         });
